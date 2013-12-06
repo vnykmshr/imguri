@@ -6,7 +6,11 @@ if (require.main === module) {
     var options = {
       force: false
     };
-    var paths = ['test/test.png', 'test/nofile', 'http://www.vnykmshr.com/images/favicon.ico', 'http://www.vnykmshr.com/', 'http://www.vnykmshr.com/images/whois.png'];
+    var paths = ['test/test.png', 'test/nofile'];
+    paths.push('http://www.vnykmshr.com/images/favicon.ico');
+    paths.push('http://www.vnykmshr.com/');
+    paths.push('http://www.vnykmshr.com/images/whois.png');
+    paths.push('http://www.mmpgroup.com.au/data/images/loading.gif');
     imguri.encode(paths, options, console.log);
   })();
 }
