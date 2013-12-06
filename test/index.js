@@ -10,7 +10,6 @@ if (require.main === module) {
     paths.push('http://www.vnykmshr.com/images/favicon.ico');
     paths.push('http://www.vnykmshr.com/');
     paths.push('http://www.vnykmshr.com/images/whois.png');
-    paths.push('http://www.mmpgroup.com.au/data/images/loading.gif');
     imguri.encode(paths, options, console.log);
   })();
 }
