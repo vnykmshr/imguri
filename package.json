@@ -1,6 +1,6 @@
 {
     "name": "imguri",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "Easily convert local/network image file to data uri scheme ",
     "main": "index.js",
     "scripts": {
