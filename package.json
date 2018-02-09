@@ -1,6 +1,6 @@
 {
   "name": "imguri",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "Easily convert local/network image file to data uri scheme ",
   "main": "index.js",
   "scripts": {
@@ -16,10 +16,10 @@
     "url": "git@github.com:vnykmshr/imguri.git"
   },
   "keywords": [
-        "data-uri",
-        "image-data",
-        "inline-image"
-    ],
+    "data-uri",
+    "image-data",
+    "inline-image"
+  ],
   "author": "Vinayak Mishra",
   "license": "MIT",
   "bugs": {
