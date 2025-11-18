@@ -35,7 +35,7 @@ Early implementations relied on deprecated libraries (async, request, mime) with
 The library follows a two-layer architecture that separates business logic from I/O operations:
 
 ```mermaid
-graph TD
+flowchart TD
     A[Client Code] -->|encode/encodeSingle| B[imguri.js]
     B -->|validate path| C{Path Type?}
     C -->|Local File| D[file-reader.js]
@@ -43,11 +43,6 @@ graph TD
     D -->|buffer + MIME| F[encoder.js]
     E -->|buffer + MIME| F
     F -->|data URI| A
-
-    style B fill:#e1f5ff
-    style D fill:#fff4e6
-    style E fill:#fff4e6
-    style F fill:#f3e5f5
 ```
 
 ### Component Responsibilities
