@@ -6,26 +6,26 @@
 [![npm version](https://img.shields.io/npm/v/imguri.svg)](https://www.npmjs.com/package/imguri)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## ✨ Features
+## Features
 
-- 🚀 **Modern** - Built with ES modules, async/await, and native fetch API
-- 📦 **Lightweight** - Single dependency (mime-types), lean codebase (~250 LOC)
-- 🌐 **Universal** - Supports both local files and remote URLs
-- ⚡ **Fast** - Concurrent processing with configurable limits, esbuild-powered builds
-- 🛡️ **Secure** - Path traversal protection, no deprecated dependencies
-- 🔄 **Backward Compatible** - Legacy callback API supported (deprecated, will be removed in v2.0)
+- **Modern** - Built with ES modules, async/await, and native fetch API
+- **Lightweight** - Single dependency (mime-types), lean codebase (~250 LOC)
+- **Universal** - Supports both local files and remote URLs
+- **Fast** - Concurrent processing with configurable limits, esbuild-powered builds
+- **Secure** - Path traversal protection, no deprecated dependencies
+- **Backward Compatible** - Legacy callback API supported (deprecated, will be removed in v2.0)
 
-## 📋 Requirements
+## Requirements
 
 - Node.js >= 18.0.0 (for native fetch API support)
 
-## 📦 Installation
+## Installation
 
 ```bash
 npm install imguri
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### ESM (Recommended)
 
@@ -63,7 +63,7 @@ const { encodeSingle, encode } = require('imguri');
 })();
 ```
 
-## 📖 API Reference
+## API Reference
 
 ### `encodeSingle(path, options?)`
 
@@ -164,7 +164,7 @@ encodeLegacy(['image1.png', 'image2.jpg'], { force: false }, (err, results) => {
 });
 ```
 
-## 🔧 Options
+## Options
 
 | Option        | Type    | Default  | Description                                  |
 | ------------- | ------- | -------- | -------------------------------------------- |
@@ -173,7 +173,7 @@ encodeLegacy(['image1.png', 'image2.jpg'], { force: false }, (err, results) => {
 | `timeout`     | number  | `20000`  | HTTP request timeout in milliseconds         |
 | `concurrency` | number  | `10`     | Maximum number of concurrent encode requests |
 
-## 💡 Use Cases
+## Use Cases
 
 ### Email Templates with Inline Images
 
@@ -233,7 +233,7 @@ await inlineAssets();
 // Output: dist/inlined-assets.json with { "favicon": "data:image/...", ... }
 ```
 
-## ⚠️ Important Notes
+## Important Notes
 
 1. **Size Limits**: Default 128KB limit balances practicality with performance. Large data URIs increase page load time.
 2. **Browser Support**: Data URIs are well-supported but have size limits (~2MB in most browsers)
@@ -244,7 +244,7 @@ await inlineAssets();
    - Consider lazy loading for multiple images
    - Cache encoded results when possible
 
-## 🔄 Migration from v0.x
+## Migration from v0.x
 
 The v1.0 release introduces breaking changes for a more modern API:
 
@@ -280,7 +280,7 @@ encodeLegacy(['image.png'], { force: false }, (err, results) => {
 });
 ```
 
-## 🏗️ Architecture
+## Architecture
 
 This library follows a two-layer architecture with clear separation of concerns:
 
@@ -297,7 +297,7 @@ This library follows a two-layer architecture with clear separation of concerns:
 
 Data flows from adapters through validation to the encoder, with the main module orchestrating all operations.
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run tests
@@ -310,7 +310,7 @@ npm run test:watch
 npm run test:coverage
 ```
 
-## 🔨 Development
+## Development
 
 ```bash
 # Install dependencies
@@ -326,14 +326,14 @@ npm run format
 npm run build
 ```
 
-## 📝 License
+## License
 
 MIT License
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📊 Changelog
+## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for version history.
