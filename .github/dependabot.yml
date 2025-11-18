@@ -1,45 +1,45 @@
 version: 2
 updates:
   # Enable version updates for npm
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: 'weekly'
+      day: 'monday'
     open-pull-requests-limit: 5
     groups:
       # Group all production dependencies
       production:
         patterns:
-          - "*"
+          - '*'
         exclude-patterns:
-          - "@vitest/*"
-          - "vitest"
-          - "eslint*"
-          - "prettier"
-          - "esbuild"
-          - "nock"
+          - '@vitest/*'
+          - 'vitest'
+          - 'eslint*'
+          - 'prettier'
+          - 'esbuild'
+          - 'nock'
       # Group all development dependencies
       development:
         patterns:
-          - "@vitest/*"
-          - "vitest"
-          - "eslint*"
-          - "prettier"
-          - "esbuild"
-          - "nock"
-          - "@types/*"
+          - '@vitest/*'
+          - 'vitest'
+          - 'eslint*'
+          - 'prettier'
+          - 'esbuild'
+          - 'nock'
+          - '@types/*'
     commit-message:
-      prefix: "chore"
-      prefix-development: "chore"
-      include: "scope"
+      prefix: 'chore'
+      prefix-development: 'chore'
+      include: 'scope'
 
   # Enable version updates for GitHub Actions
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: 'weekly'
+      day: 'monday'
     open-pull-requests-limit: 2
     commit-message:
-      prefix: "ci"
+      prefix: 'ci'
