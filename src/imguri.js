@@ -7,11 +7,7 @@ import {
   readFileBuffer,
 } from './adapters/file-reader.js';
 import { fetchMetadata, fetchBuffer } from './adapters/http-client.js';
-import {
-  DEFAULT_SIZE_LIMIT,
-  DEFAULT_TIMEOUT,
-  DEFAULT_CONCURRENCY,
-} from './config.js';
+import { DEFAULT_SIZE_LIMIT, DEFAULT_TIMEOUT, DEFAULT_CONCURRENCY } from './config.js';
 
 const URL_PATTERN = /^https?:\/\//i;
 
@@ -102,9 +98,7 @@ async function encodeRemoteUrl(url, options = {}) {
 }
 
 export async function encodeSingle(path, options = {}) {
-  return isUrl(path)
-    ? encodeRemoteUrl(path, options)
-    : encodeLocalFile(path, options);
+  return isUrl(path) ? encodeRemoteUrl(path, options) : encodeLocalFile(path, options);
 }
 
 export async function encode(paths, options = {}) {

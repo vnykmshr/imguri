@@ -25,12 +25,10 @@ describe('fetchMetadata', () => {
   });
 
   it('should fetch metadata with HEAD request', async () => {
-    nock(TEST_HOST)
-      .head(TEST_PATH)
-      .reply(200, '', {
-        'content-type': 'image/png',
-        'content-length': '1234',
-      });
+    nock(TEST_HOST).head(TEST_PATH).reply(200, '', {
+      'content-type': 'image/png',
+      'content-length': '1234',
+    });
 
     const result = await fetchMetadata(TEST_URL);
 
@@ -39,11 +37,9 @@ describe('fetchMetadata', () => {
   });
 
   it('should handle missing content-type header', async () => {
-    nock(TEST_HOST)
-      .head(TEST_PATH)
-      .reply(200, '', {
-        'content-length': '5678',
-      });
+    nock(TEST_HOST).head(TEST_PATH).reply(200, '', {
+      'content-length': '5678',
+    });
 
     const result = await fetchMetadata(TEST_URL);
 
@@ -52,11 +48,9 @@ describe('fetchMetadata', () => {
   });
 
   it('should handle missing content-length header', async () => {
-    nock(TEST_HOST)
-      .head(TEST_PATH)
-      .reply(200, '', {
-        'content-type': 'image/jpeg',
-      });
+    nock(TEST_HOST).head(TEST_PATH).reply(200, '', {
+      'content-type': 'image/jpeg',
+    });
 
     const result = await fetchMetadata(TEST_URL);
 
@@ -88,13 +82,10 @@ describe('fetchMetadata', () => {
   }, 300);
 
   it('should respect custom timeout', async () => {
-    nock(TEST_HOST)
-      .head(TEST_PATH)
-      .delay(50)
-      .reply(200, '', {
-        'content-type': 'image/png',
-        'content-length': '100',
-      });
+    nock(TEST_HOST).head(TEST_PATH).delay(50).reply(200, '', {
+      'content-type': 'image/png',
+      'content-length': '100',
+    });
 
     const result = await fetchMetadata(TEST_URL, 200);
 
@@ -108,11 +99,9 @@ describe('fetchBuffer', () => {
   });
 
   it('should fetch buffer with GET request', async () => {
-    nock(TEST_HOST)
-      .get(TEST_PATH)
-      .reply(200, testPngBuffer, {
-        'content-type': 'image/png',
-      });
+    nock(TEST_HOST).get(TEST_PATH).reply(200, testPngBuffer, {
+      'content-type': 'image/png',
+    });
 
     const result = await fetchBuffer(TEST_URL);
 
@@ -153,11 +142,9 @@ describe('fetchBuffer', () => {
 
   it('should handle large responses', async () => {
     const largeBuffer = Buffer.alloc(100000, 'x');
-    nock(TEST_HOST)
-      .get(TEST_PATH)
-      .reply(200, largeBuffer, {
-        'content-type': 'image/jpeg',
-      });
+    nock(TEST_HOST).get(TEST_PATH).reply(200, largeBuffer, {
+      'content-type': 'image/jpeg',
+    });
 
     const result = await fetchBuffer(TEST_URL);
 
@@ -170,11 +157,9 @@ describe('fetchBuffer', () => {
       .get(TEST_PATH)
       .reply(302, '', { location: `${TEST_HOST}/redirected.png` });
 
-    nock(TEST_HOST)
-      .get('/redirected.png')
-      .reply(200, testPngBuffer, {
-        'content-type': 'image/png',
-      });
+    nock(TEST_HOST).get('/redirected.png').reply(200, testPngBuffer, {
+      'content-type': 'image/png',
+    });
 
     const result = await fetchBuffer(TEST_URL);
 

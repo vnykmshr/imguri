@@ -93,9 +93,7 @@ describe('path security validation', () => {
   it('should allow absolute paths (explicit user intent)', async () => {
     // Absolute paths are allowed - if user provides explicit path, that's their intent
     // File not found is OK - we're just testing path validation doesn't block it
-    await expect(encodeSingle('/tmp/nonexistent.png')).rejects.toThrow(
-      'File not found'
-    );
+    await expect(encodeSingle('/tmp/nonexistent.png')).rejects.toThrow('File not found');
   });
 
   it('should allow relative paths within cwd', async () => {
@@ -183,11 +181,9 @@ describe('encodeSingle - remote URLs', () => {
         'content-length': String(testPngBuffer.length),
       });
 
-    nock(TEST_HOST)
-      .get('/image.png')
-      .reply(200, testPngBuffer, {
-        'content-type': 'image/png',
-      });
+    nock(TEST_HOST).get('/image.png').reply(200, testPngBuffer, {
+      'content-type': 'image/png',
+    });
 
     const result = await encodeSingle(TEST_IMAGE_URL);
     expect(result).toMatch(/^data:image\/png;base64,/);
@@ -203,23 +199,19 @@ describe('encodeSingle - remote URLs', () => {
         'content-length': String(testPngBuffer.length),
       });
 
-    nock('http://example.com')
-      .get('/image.jpg')
-      .reply(200, testPngBuffer, {
-        'content-type': 'image/jpeg',
-      });
+    nock('http://example.com').get('/image.jpg').reply(200, testPngBuffer, {
+      'content-type': 'image/jpeg',
+    });
 
     const result = await encodeSingle(httpUrl);
     expect(result).toMatch(/^data:image\/jpeg;base64,/);
   });
 
   it('should reject non-image content type', async () => {
-    nock(TEST_HOST)
-      .head('/page.html')
-      .reply(200, '', {
-        'content-type': 'text/html',
-        'content-length': '1234',
-      });
+    nock(TEST_HOST).head('/page.html').reply(200, '', {
+      'content-type': 'text/html',
+      'content-length': '1234',
+    });
 
     await expect(encodeSingle(TEST_HTML_URL)).rejects.toThrow(
       'Not an image. Content-Type: text/html'
@@ -227,12 +219,10 @@ describe('encodeSingle - remote URLs', () => {
   });
 
   it('should enforce size limit for remote URLs', async () => {
-    nock(TEST_HOST)
-      .head('/large.png')
-      .reply(200, '', {
-        'content-type': 'image/png',
-        'content-length': '200000', // Larger than 128KB default
-      });
+    nock(TEST_HOST).head('/large.png').reply(200, '', {
+      'content-type': 'image/png',
+      'content-length': '200000', // Larger than 128KB default
+    });
 
     await expect(encodeSingle(`${TEST_HOST}/large.png`)).rejects.toThrow(
       'Size limit exceeded'
@@ -242,18 +232,14 @@ describe('encodeSingle - remote URLs', () => {
   it('should allow force override for remote URLs', async () => {
     const largeBuffer = Buffer.alloc(200000);
 
-    nock(TEST_HOST)
-      .head('/large.png')
-      .reply(200, '', {
-        'content-type': 'image/png',
-        'content-length': '200000',
-      });
+    nock(TEST_HOST).head('/large.png').reply(200, '', {
+      'content-type': 'image/png',
+      'content-length': '200000',
+    });
 
-    nock(TEST_HOST)
-      .get('/large.png')
-      .reply(200, largeBuffer, {
-        'content-type': 'image/png',
-      });
+    nock(TEST_HOST).get('/large.png').reply(200, largeBuffer, {
+      'content-type': 'image/png',
+    });
 
     const result = await encodeSingle(`${TEST_HOST}/large.png`, { force: true });
     expect(result).toMatch(/^data:image\/png;base64,/);
@@ -273,9 +259,7 @@ describe('encodeSingle - remote URLs', () => {
   it('should handle HTTP 404 errors', async () => {
     nock(TEST_HOST).head('/missing.png').reply(404, 'Not Found');
 
-    await expect(encodeSingle(`${TEST_HOST}/missing.png`)).rejects.toThrow(
-      'HTTP 404'
-    );
+    await expect(encodeSingle(`${TEST_HOST}/missing.png`)).rejects.toThrow('HTTP 404');
   });
 
   it('should handle HTTP 500 errors', async () => {
@@ -287,18 +271,14 @@ describe('encodeSingle - remote URLs', () => {
   it('should check size after download if content-length missing', async () => {
     const largeBuffer = Buffer.alloc(200000);
 
-    nock(TEST_HOST)
-      .head('/no-length.png')
-      .reply(200, '', {
-        'content-type': 'image/png',
-        // No content-length header
-      });
+    nock(TEST_HOST).head('/no-length.png').reply(200, '', {
+      'content-type': 'image/png',
+      // No content-length header
+    });
 
-    nock(TEST_HOST)
-      .get('/no-length.png')
-      .reply(200, largeBuffer, {
-        'content-type': 'image/png',
-      });
+    nock(TEST_HOST).get('/no-length.png').reply(200, largeBuffer, {
+      'content-type': 'image/png',
+    });
 
     await expect(encodeSingle(`${TEST_HOST}/no-length.png`)).rejects.toThrow(
       'Size limit exceeded'
@@ -321,11 +301,9 @@ describe('encode - batch with remote URLs', () => {
         'content-length': String(testPngBuffer.length),
       });
 
-    nock(TEST_HOST)
-      .get('/remote.png')
-      .reply(200, testPngBuffer, {
-        'content-type': 'image/png',
-      });
+    nock(TEST_HOST).get('/remote.png').reply(200, testPngBuffer, {
+      'content-type': 'image/png',
+    });
 
     const results = await encode([testImagePath, `${TEST_HOST}/remote.png`]);
 
@@ -339,10 +317,12 @@ describe('encode - batch with remote URLs', () => {
   });
 
   it('should handle mix of success and failures with URLs', async () => {
-    nock(TEST_HOST).head('/success.png').reply(200, '', {
-      'content-type': 'image/png',
-      'content-length': String(testPngBuffer.length),
-    });
+    nock(TEST_HOST)
+      .head('/success.png')
+      .reply(200, '', {
+        'content-type': 'image/png',
+        'content-length': String(testPngBuffer.length),
+      });
 
     nock(TEST_HOST).get('/success.png').reply(200, testPngBuffer, {
       'content-type': 'image/png',
@@ -350,10 +330,7 @@ describe('encode - batch with remote URLs', () => {
 
     nock(TEST_HOST).head('/fail.png').reply(404);
 
-    const results = await encode([
-      `${TEST_HOST}/success.png`,
-      `${TEST_HOST}/fail.png`,
-    ]);
+    const results = await encode([`${TEST_HOST}/success.png`, `${TEST_HOST}/fail.png`]);
 
     expect(results.size).toBe(2);
     expect(results.get(`${TEST_HOST}/success.png`)?.data).toMatch(/^data:image/);

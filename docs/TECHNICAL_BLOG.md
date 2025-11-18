@@ -43,7 +43,7 @@ graph TD
     D -->|buffer + MIME| F[encoder.js]
     E -->|buffer + MIME| F
     F -->|data URI| A
-    
+
     style B fill:#e1f5ff
     style D fill:#fff4e6
     style E fill:#fff4e6
@@ -53,15 +53,18 @@ graph TD
 ### Component Responsibilities
 
 **Core Layer** (`encoder.js`):
+
 - Base64 encoding
 - Data URI formatting
 - Pure functions, no side effects
 
 **Adapter Layer**:
+
 - `file-reader.js`: File system operations (stat, read, MIME detection)
 - `http-client.js`: HTTP operations (HEAD for metadata, GET for content)
 
 **Orchestration** (`imguri.js`):
+
 - Path validation and security checks
 - Adapter coordination
 - Concurrency management
@@ -76,7 +79,7 @@ sequenceDiagram
     participant Validator
     participant Adapter
     participant Encoder
-    
+
     Client->>imguri: encode(['file.png', 'url.jpg'])
     imguri->>Validator: validatePath('file.png')
     Validator-->>imguri: normalized path
@@ -96,12 +99,12 @@ Directory traversal attacks (`../../../etc/passwd`) are a common vulnerability. 
 ```javascript
 function validatePath(filePath) {
   const normalized = normalize(filePath);
-  
+
   // Block path traversal patterns
   if (normalized.includes('..')) {
     throw new Error('path traversal detected');
   }
-  
+
   // Validate relative paths don't escape cwd
   if (!isAbsolutePath(normalized)) {
     const resolved = resolve(normalized);
@@ -109,7 +112,7 @@ function validatePath(filePath) {
       throw new Error('relative path escapes cwd');
     }
   }
-  
+
   return normalized;
 }
 ```
@@ -125,11 +128,11 @@ async function encode(paths, options = {}) {
   const { concurrency = 10 } = options;
   const uniquePaths = [...new Set(pathArray)];
   const results = new Map();
-  
+
   // Process in batches
   for (let i = 0; i < uniquePaths.length; i += concurrency) {
     const batch = uniquePaths.slice(i, i + concurrency);
-    
+
     await Promise.all(
       batch.map(async (path) => {
         try {
@@ -141,12 +144,13 @@ async function encode(paths, options = {}) {
       })
     );
   }
-  
+
   return results;
 }
 ```
 
 **Key features**:
+
 - Configurable concurrency (default: 10)
 - Batched execution prevents resource exhaustion
 - Individual error handling preserves partial results
@@ -160,23 +164,20 @@ Remote image fetching requires HEAD request optimization and proper timeout hand
 async function fetchMetadata(url, timeout = 20000) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
-  
+
   try {
     const response = await fetch(url, {
       method: 'HEAD',
       signal: controller.signal,
     });
-    
+
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
-    
+
     const contentType = response.headers.get('content-type');
-    const contentLength = parseInt(
-      response.headers.get('content-length') || '0', 
-      10
-    );
-    
+    const contentLength = parseInt(response.headers.get('content-length') || '0', 10);
+
     return { contentType, contentLength };
   } finally {
     clearTimeout(timeoutId);
@@ -210,9 +211,9 @@ import { encodeSingle } from 'imguri';
 
 async function generateEmail() {
   const logo = await encodeSingle('assets/logo.png', {
-    sizeLimit: 10240  // 10KB - email-safe size
+    sizeLimit: 10240, // 10KB - email-safe size
   });
-  
+
   return `
     <img src="${logo}" alt="Logo" width="200">
   `;
@@ -228,16 +229,18 @@ Bundlers can eliminate HTTP requests for critical assets:
 ```javascript
 import { encode } from 'imguri';
 
-const assets = await encode([
-  'src/icons/search.svg',
-  'src/icons/menu.svg',
-  'src/favicon.ico'
-], { force: true, concurrency: 5 });
+const assets = await encode(
+  ['src/icons/search.svg', 'src/icons/menu.svg', 'src/favicon.ico'],
+  { force: true, concurrency: 5 }
+);
 
 const manifest = Object.fromEntries(
   Array.from(assets).map(([path, result]) => [
-    path.split('/').pop().replace(/\.\w+$/, ''),
-    result.data
+    path
+      .split('/')
+      .pop()
+      .replace(/\.\w+$/, ''),
+    result.data,
   ])
 );
 ```
@@ -251,7 +254,7 @@ Progressive web apps can cache data URIs in IndexedDB or LocalStorage:
 ```javascript
 const results = await encode([
   'https://cdn.example.com/avatar.jpg',
-  'https://cdn.example.com/banner.png'
+  'https://cdn.example.com/banner.png',
 ]);
 
 await db.put('cached-images', Array.from(results));
@@ -296,17 +299,19 @@ Data URIs must be complete strings. Streaming base64 encoding would require buff
 
 ### Why Allow Absolute Paths?
 
-Blocking all absolute paths is overly restrictive. Explicit paths represent user intent. The security boundary is preventing *unintended* traversal, not restricting *intended* access.
+Blocking all absolute paths is overly restrictive. Explicit paths represent user intent. The security boundary is preventing _unintended_ traversal, not restricting _intended_ access.
 
 ## When to Use imguri
 
 **Good fit**:
+
 - Email templates (inline images avoid blocking)
 - Build tools (reduce HTTP requests for critical assets)
 - Offline-first apps (cache images as data)
 - Small icon sets (5-50KB each)
 
 **Poor fit**:
+
 - Large photographs (>200KB degrades performance)
 - Frequently changing images (defeats HTTP caching)
 - High-traffic public websites (bandwidth waste)

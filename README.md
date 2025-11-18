@@ -39,7 +39,7 @@ const uri = await encodeSingle('https://example.com/image.jpg');
 // With options
 const uri = await encodeSingle('large.png', {
   sizeLimit: 256000, // 250KB
-  force: true        // override limit
+  force: true, // override limit
 });
 ```
 
@@ -48,11 +48,9 @@ const uri = await encodeSingle('large.png', {
 ```javascript
 import { encode } from 'imguri';
 
-const results = await encode([
-  'icon1.png',
-  'icon2.png',
-  'https://example.com/logo.jpg'
-], { concurrency: 5 });
+const results = await encode(['icon1.png', 'icon2.png', 'https://example.com/logo.jpg'], {
+  concurrency: 5,
+});
 
 for (const [path, result] of results) {
   if (result.error) {
@@ -113,12 +111,12 @@ Callback-based API for v0.x compatibility. Deprecated, will be removed in v2.0.
 
 ## Configuration
 
-| Option       | Type    | Default  | Description                    |
-| ------------ | ------- | -------- | ------------------------------ |
-| sizeLimit    | number  | 131072   | Max file size in bytes (128KB) |
-| timeout      | number  | 20000    | HTTP timeout in milliseconds   |
-| concurrency  | number  | 10       | Max concurrent operations      |
-| force        | boolean | false    | Override size limit            |
+| Option      | Type    | Default | Description                    |
+| ----------- | ------- | ------- | ------------------------------ |
+| sizeLimit   | number  | 131072  | Max file size in bytes (128KB) |
+| timeout     | number  | 20000   | HTTP timeout in milliseconds   |
+| concurrency | number  | 10      | Max concurrent operations      |
+| force       | boolean | false   | Override size limit            |
 
 ## Security
 
