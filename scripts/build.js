@@ -1,8 +1,4 @@
-/**
- * Build script to generate CJS and ESM bundles
- * Keeps it lean - no bundler needed for such a simple library
- */
-
+// Build script to generate CJS and ESM bundles
 import { readFile, writeFile, mkdir, readdir } from 'fs/promises';
 import { join, dirname, relative } from 'path';
 import { fileURLToPath } from 'url';
@@ -13,9 +9,6 @@ const rootDir = join(__dirname, '..');
 const srcDir = join(rootDir, 'src');
 const distDir = join(rootDir, 'dist');
 
-/**
- * Convert ESM import/export to CommonJS require/module.exports
- */
 function esmToCjs(code) {
   let transformed = code;
 
@@ -86,16 +79,10 @@ function esmToCjs(code) {
   return transformed;
 }
 
-/**
- * Update ESM imports to use .mjs extension
- */
 function fixEsmImports(code) {
   return code.replace(/from\s+['"](\.\/.+?)(?:\.js)?['"]/g, "from '$1.mjs'");
 }
 
-/**
- * Recursively get all .js files in a directory
- */
 async function getAllJsFiles(dir, fileList = []) {
   const files = await readdir(dir, { withFileTypes: true });
 
@@ -104,7 +91,7 @@ async function getAllJsFiles(dir, fileList = []) {
 
     if (file.isDirectory()) {
       await getAllJsFiles(filePath, fileList);
-    } else if (file.name.endsWith('.js')) {
+    } else if (file.name.endsWith('.js') && !file.name.endsWith('.test.js')) {
       fileList.push(filePath);
     }
   }
@@ -112,9 +99,6 @@ async function getAllJsFiles(dir, fileList = []) {
   return fileList;
 }
 
-/**
- * Main build function
- */
 async function build() {
   console.log('🔨 Building imguri...\n');
 

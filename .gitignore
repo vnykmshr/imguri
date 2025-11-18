@@ -68,3 +68,8 @@ coverage/
 .cache/
 .temp/
 tmp/
+
+# Test artifacts
+test/*.png
+!test/test.png
+test/*.unknown

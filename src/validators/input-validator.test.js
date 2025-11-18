@@ -1,7 +1,3 @@
-/**
- * Tests for input validators
- */
-
 import { describe, it, expect } from 'vitest';
 import {
   getPathType,
@@ -9,8 +5,8 @@ import {
   validateImageContentType,
   validateFileExists,
   validateMimeType,
-  DEFAULT_SIZE_LIMIT,
 } from './input-validator.js';
+import { DEFAULT_SIZE_LIMIT } from '../config.js';
 
 describe('getPathType', () => {
   it('should identify HTTP URLs', () => {
