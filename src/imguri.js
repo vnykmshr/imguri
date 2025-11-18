@@ -6,22 +6,22 @@ import {
   getMimeType,
   readFileBuffer,
 } from './adapters/file-reader.js';
-import { fetchMetadata, fetchBuffer } from './adapters/http-client.js';
+import {
+  fetchMetadata,
+  fetchBuffer,
+  isImageContentType,
+} from './adapters/http-client.js';
 import { DEFAULT_SIZE_LIMIT, DEFAULT_TIMEOUT, DEFAULT_CONCURRENCY } from './config.js';
 
 const URL_PATTERN = /^https?:\/\//i;
 
-// Security: validate file path to prevent traversal attacks
 function validatePath(filePath) {
   const normalized = normalize(filePath);
 
-  // Block obvious path traversal patterns with .. (security risk)
   if (normalized.includes('..')) {
     throw new Error(`Invalid path: path traversal detected in "${filePath}"`);
   }
 
-  // For relative paths, ensure they don't escape cwd after resolution
-  // Absolute paths are allowed (explicit user intent)
   if (!normalized.startsWith('/') && !normalized.match(/^[A-Za-z]:\\/)) {
     const resolved = resolve(normalized);
     if (!resolved.startsWith(process.cwd())) {
@@ -36,10 +36,6 @@ function validatePath(filePath) {
 
 function isUrl(path) {
   return URL_PATTERN.test(path);
-}
-
-function isImage(contentType) {
-  return /^image\//i.test(contentType);
 }
 
 async function encodeLocalFile(filePath, options = {}) {
@@ -76,7 +72,7 @@ async function encodeRemoteUrl(url, options = {}) {
 
   const { contentType, contentLength } = await fetchMetadata(url, timeout);
 
-  if (!isImage(contentType)) {
+  if (!isImageContentType(contentType)) {
     throw new Error(`Not an image. Content-Type: ${contentType}, URL: ${url}`);
   }
 

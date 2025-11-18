@@ -50,7 +50,7 @@
     "image-encoding",
     "data-url",
     "esm",
-    "typescript"
+    "nodejs"
   ],
   "author": "Vinayak Mishra",
   "license": "MIT",
