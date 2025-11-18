@@ -44,7 +44,8 @@ yarn.lock
 pnpm-lock.yaml
 
 # Build outputs
-dist/
+dist/*
+!dist/index.d.ts
 *.tsbuildinfo
 
 # Testing
