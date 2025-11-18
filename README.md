@@ -230,7 +230,7 @@ localStorage.setItem('cached-images', JSON.stringify(Array.from(results)));
 
 1. **Size Limits**: Default 128KB limit balances practicality with performance. Large data URIs increase page load time.
 2. **Browser Support**: Data URIs are well-supported but have size limits (~2MB in most browsers)
-3. **Security**: Paths are validated to prevent traversal attacks - relative paths within cwd are allowed, `..` and absolute paths outside cwd are blocked
+3. **Security**: Path traversal attacks (`../`) are blocked. Absolute paths are allowed (explicit user intent). Relative paths are validated to ensure they don't escape cwd.
 4. **Best Practices**:
    - Use for small images (icons, logos, favicons)
    - Avoid for large photos or complex graphics

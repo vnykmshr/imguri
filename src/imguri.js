@@ -19,21 +19,19 @@ const URL_PATTERN = /^https?:\/\//i;
 function validatePath(filePath) {
   const normalized = normalize(filePath);
 
-  // Block obvious path traversal patterns
+  // Block obvious path traversal patterns with .. (security risk)
   if (normalized.includes('..')) {
     throw new Error(`Invalid path: path traversal detected in "${filePath}"`);
   }
 
-  // Block absolute paths outside current working directory on Unix
-  if (normalized.startsWith('/') && !normalized.startsWith(process.cwd())) {
-    throw new Error(`Invalid path: absolute paths outside cwd not allowed "${filePath}"`);
-  }
-
-  // Block UNC paths and Windows absolute paths outside cwd
-  if (normalized.match(/^[A-Za-z]:\\/) || normalized.startsWith('\\\\')) {
+  // For relative paths, ensure they don't escape cwd after resolution
+  // Absolute paths are allowed (explicit user intent)
+  if (!normalized.startsWith('/') && !normalized.match(/^[A-Za-z]:\\/)) {
     const resolved = resolve(normalized);
     if (!resolved.startsWith(process.cwd())) {
-      throw new Error(`Invalid path: absolute paths outside cwd not allowed "${filePath}"`);
+      throw new Error(
+        `Invalid path: relative path escapes cwd "${filePath}" -> "${resolved}"`
+      );
     }
   }
 
