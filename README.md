@@ -1,63 +1,337 @@
 # ImgUri
 
-Easily convert local/network image file to data uri scheme.
+> Modern, lightweight library to convert local/network image files to data URI scheme
 
-## Installation
+[![CI](https://github.com/vnykmshr/imguri/workflows/CI/badge.svg)](https://github.com/vnykmshr/imguri/actions)
+[![npm version](https://img.shields.io/npm/v/imguri.svg)](https://www.npmjs.com/package/imguri)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-    $ npm install --save imguri
+## ✨ Features
 
-## Usage
+- 🚀 **Modern** - Built with ES modules, async/await, and native fetch API
+- 🔒 **Type-safe** - Full TypeScript definitions included
+- 📦 **Lightweight** - Zero dependencies (only `mime-types` for MIME detection)
+- 🌐 **Universal** - Supports both local files and remote URLs
+- ⚡ **Fast** - Concurrent processing with configurable limits
+- 🛡️ **Secure** - No deprecated dependencies, built for Node.js 18+
+- 🔄 **Backward Compatible** - Legacy callback API still supported
 
-    var imguri = require('imguri');
+## 📋 Requirements
 
-    // ..
+- Node.js >= 18.0.0 (for native fetch API support)
 
-    var resources = [
-        'test/test.png',
-        'test/nofile',
-        'http://www.vnykmshr.com/images/favicon.ico',
-        'http://www.vnykmshr.com/images/whois.png',
-        'http://www.vnykmshr.com/'
-    ];
+## 📦 Installation
 
-    var options = {
-        force: false
-    };
+```bash
+npm install imguri
+```
 
-    imguri.encode(resources, options, console.log);
+## 🚀 Quick Start
 
-    // ..
-    {
-        'test/nofile': {
-            err: [Error: no such file: test/nofile],
-            data: undefined
-        },
+### ESM (Recommended)
 
-        'test/test.png': {
-            err: null,
-            data: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3QIKFAE7xDbFnAAAArZJREFUOMuVlFtIVFEUhr99zpw5c86ZySYtp/E2ZhTdSekCBVIUUUIvURChJkFERdFD7z0HEfQURNmFqKhewojexIeKpILK7pZZSBcRnUnHc+bM3j14Chu16H9asNa/1r/3v/aGidCBEJNDBDltMlIhDgFHgZ6AWAWUAhawCTgGDAHv+AdOAgrwgFwQq3GxCzQVkgqPEAkmAxh/qU38S81qoBtQ0YghZ0RtZYUNZYcNVRyzlWOGZKDqATD/b4pKgdSO+jpadm0XhpvBHRkZk2pbZMMxcbr1Mm0PnlcGql5P1cirmBl3DzRus8qykuSyOix9rJGHw8eHXexv3E7nqx7/6+CPXKGiIsAOHDScSLjPipg1btpVXh4R9l2EEHi6w6iPisZtYZvhQSAGlAN5wNWDC84DaeBFf3rYrJzurG/YWq9FjRy5wQzKl1iOTjyVENdv3eFGx+NTwMXAQQFIMV5dzYrltbMqk6P3b96Ob6xbuG9eRWLDNMss1jTBaC4/2Putv/16+6NzQNuUdp1VKrRs7+FN1bVLTtRuXreSsFUEPA32xwOeBdOnxu5e9Tt2ZsSbSuemOuLJxAuhiSfA+8CdDmAt/4lyoBm4AbwBuoBrwIpfBS19iqNdcuIetXxWtJYLjnhKjxmUXG3cU5Pu+bAo/b67RAvpMlpVrUeTyZ1br16yM5/UwzNJkW3+LP94zb/R1KtsI8RBzWDf27Z75ZnebsMwXTQ9RDYjKJozNz+vYc2XvMcV3+f4hSrxfdKFzGfxjRizla+qE3WrMEuXoocNBIJo1qW42talr8oQIiWkkoX/yx/Y0ydjms7qH/1iy/AAi70RahVETIfOWAkvrSJ1Vyo65BAD5xdoExvt7pGcT40l9n6TYugr2uiQ0NxhpSkEpqNktBhpTUeena0pgJaPktaqMc5PvVXwjWslTpwAAAAASUVORK5CYII='
-        },
+```javascript
+import { encodeSingle, encode } from 'imguri';
 
-        'http://www.vnykmshr.com/images/whois.png': {
-            err: [Error: Size limit exceeded: 11202 > 4096 Set options.force to override],
-            data: undefined
-        },
+// Encode a single file
+const dataUri = await encodeSingle('path/to/image.png');
+console.log(dataUri); // data:image/png;base64,...
 
-        'http://www.vnykmshr.com/': {
-            err: [Error: Not an image, content - type: text / html, link: http: //www.vnykmshr.com/],
-            data: undefined
-        },
+// Encode multiple files
+const results = await encode([
+  'image1.png',
+  'https://example.com/image2.jpg',
+  'image3.gif',
+]);
 
-        'http://www.vnykmshr.com/images/favicon.ico': {
-            err: null,
-            data: 'data:binary;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAD////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////+/v7///////////////////////7+/v////////////7+/v/+/v7///////////////////////7+/v/+/v7//////8PDw//09PT/5+fn//7+/v//////8PDw/+jo6P///////////+jo6P/t7e3/0dHR/+jo6P///////////9/f3/9PT0//jIyM/wAAAP/w8PD//////0xMTP8AAAD///////////8AAAD/LCws/7Gxsf9VVVX///////////9kZGT/qamp/5OTk/8AAAD/8vLy//////9VVVX/AAAA////////////AAAA/zc3N///////FRUV//r6+v/4+Pj/GBgY//////+Tk5P/AAAA//Ly8v//////VVVV/wAAAP///////////wAAAP83Nzf//////09PT//c3Nz/1tbW/15eXv//////k5OT/wAAAP/w8PD//////1ZWVv8AAAD///////////8AAAD/NjY2//////+wsLD/rq6u/5qamv/Hx8f//////5OTk/8AAAD/gYGB//////8iIiL/AAAA/729vf/k5OT/AAAA/zw8PP//////5+fn/2pqav9RUVH/8PDw//////+Pj4//AAAA/ysrK/8AAAD/AAAA/0FBQf8HBwf/AAAA/wAAAP+4uLj///////f39/89PT3/Pj4+//7+/v//////9/f3/+3t7f/6+vr/w8PD/8HBwf/7+/v/7u7u/6ysrP/i4uL//v7+////////////VlZW/5CQkP///////v7+/////////////////////////////v7+//////////////////7+/v///////////6mpqf/z8/P////////////////////////////////////////////////////////////////////////////4+Pj///////7+/v/////////////////////////////////////////////////////////////////+/v7/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA='
-        }
+for (const [path, result] of results) {
+  if (result.error) {
+    console.error(`Failed to encode ${path}:`, result.error);
+  } else {
+    console.log(`Success: ${path} -> ${result.data.substring(0, 50)}...`);
+  }
+}
+```
+
+### CommonJS
+
+```javascript
+const { encodeSingle, encode } = require('imguri');
+
+(async () => {
+  const dataUri = await encodeSingle('path/to/image.png');
+  console.log(dataUri);
+})();
+```
+
+### TypeScript
+
+```typescript
+import { encodeSingle, encode, type EncodeOptions } from 'imguri';
+
+const options: EncodeOptions = {
+  force: false,
+  sizeLimit: 8192, // 8KB
+  timeout: 30000,
+};
+
+const dataUri: string = await encodeSingle('image.png', options);
+```
+
+## 📖 API Reference
+
+### `encodeSingle(path, options?)`
+
+Encode a single file or URL to a data URI.
+
+**Parameters:**
+
+- `path` (string) - Local file path or HTTP/HTTPS URL
+- `options` (object, optional):
+  - `force` (boolean) - Override size limit (default: `false`)
+  - `sizeLimit` (number) - Max file size in bytes (default: `4096`)
+  - `timeout` (number) - HTTP timeout in ms (default: `20000`)
+
+**Returns:** `Promise<string>` - Data URI string
+
+**Throws:** Error if file not found, size exceeded, or network error
+
+**Example:**
+
+```javascript
+// Local file
+const uri = await encodeSingle('./logo.png');
+
+// Remote URL
+const uri = await encodeSingle('https://example.com/avatar.jpg');
+
+// With options
+const uri = await encodeSingle('./large-image.png', {
+  force: true,
+  sizeLimit: 10240, // 10KB
+});
+```
+
+### `encode(paths, options?)`
+
+Encode multiple files or URLs with concurrent processing.
+
+**Parameters:**
+
+- `paths` (string | string[]) - Single path or array of paths
+- `options` (object, optional):
+  - `force` (boolean) - Override size limit (default: `false`)
+  - `sizeLimit` (number) - Max file size in bytes (default: `4096`)
+  - `timeout` (number) - HTTP timeout in ms (default: `20000`)
+  - `concurrency` (number) - Max concurrent ops (default: `10`)
+
+**Returns:** `Promise<Map<string, EncodeResult>>`
+
+**EncodeResult:**
+
+```typescript
+{
+  data: string | null; // Data URI or null if error
+  error: Error | null; // Error object or null if success
+}
+```
+
+**Example:**
+
+```javascript
+const results = await encode(
+  ['image1.png', 'image2.jpg', 'https://example.com/image3.gif'],
+  { concurrency: 5, sizeLimit: 8192 }
+);
+
+// Process results
+for (const [path, result] of results) {
+  if (result.error) {
+    console.error(`❌ ${path}: ${result.error.message}`);
+  } else {
+    console.log(`✅ ${path}: Encoded successfully`);
+    // Use result.data in img tag
+    // <img src="${result.data}" />
+  }
+}
+```
+
+### Legacy Callback API
+
+For backward compatibility with v0.x:
+
+```javascript
+import { encodeLegacy } from 'imguri';
+
+encodeLegacy(['image1.png', 'image2.jpg'], { force: false }, (err, results) => {
+  if (err) {
+    console.error(err);
+    return;
+  }
+
+  for (const [path, result] of Object.entries(results)) {
+    if (result.err) {
+      console.error(`Failed: ${path}`, result.err);
+    } else {
+      console.log(`Success: ${path}`, result.data);
     }
+  }
+});
+```
 
-The `encode` api returns a map of file being encoded to its result. If the specified input file is larger than `4KB`, it sets an `err`, you can set `options.force` to true to encode larger files. It is generally not a good idea to encode larger image files to data-uri as it increased the page load time.
+## 🔧 Options
 
-You can use `result[file].data` as source to `img` tag on html pages to load images.
+| Option        | Type    | Default | Description                                  |
+| ------------- | ------- | ------- | -------------------------------------------- |
+| `force`       | boolean | `false` | Override size limit restrictions             |
+| `sizeLimit`   | number  | `4096`  | Maximum file size in bytes (4KB default)     |
+| `timeout`     | number  | `20000` | HTTP request timeout in milliseconds         |
+| `concurrency` | number  | `10`    | Maximum number of concurrent encode requests |
 
-## Example
+## 💡 Use Cases
 
-Please refer to [test/index.js](https://github.com/vnykmshr/imguri/blob/master/test/index.js) for a sample working code example.
+### In HTML/CSS
+
+```javascript
+const favicon = await encodeSingle('favicon.ico');
+// Use in HTML: <link rel="icon" href="data:image/x-icon;base64,..." />
+```
+
+### Email Templates
+
+```javascript
+const logo = await encodeSingle('email-logo.png', { sizeLimit: 10240 });
+// Embed in email HTML
+const html = `<img src="${logo}" alt="Logo" />`;
+```
+
+### Build Tools / Bundlers
+
+```javascript
+import { encode } from 'imguri';
+
+// Inline all images during build
+const images = ['logo.png', 'icon1.svg', 'icon2.svg'];
+const inlined = await encode(images, { force: true });
+```
+
+### Offline-First Apps
+
+```javascript
+// Cache images as data URIs
+const results = await encode([
+  'https://cdn.example.com/image1.jpg',
+  'https://cdn.example.com/image2.jpg',
+]);
+
+localStorage.setItem('cached-images', JSON.stringify(Array.from(results)));
+```
+
+## ⚠️ Important Notes
+
+1. **Size Limits**: Default 4KB limit prevents performance issues. Large data URIs increase page load time.
+2. **Browser Support**: Data URIs are well-supported but have size limits (~2MB in most browsers)
+3. **Best Practices**:
+   - Use for small images (icons, logos, favicons)
+   - Avoid for large photos or complex graphics
+   - Consider lazy loading for multiple images
+   - Cache encoded results when possible
+
+## 🔄 Migration from v0.x
+
+The v1.0 release introduces breaking changes for a more modern API:
+
+**Old (v0.x):**
+
+```javascript
+const imguri = require('imguri');
+
+imguri.encode(['image.png'], { force: false }, (err, results) => {
+  console.log(results);
+});
+```
+
+**New (v1.x):**
+
+```javascript
+import { encode } from 'imguri';
+
+const results = await encode(['image.png'], { force: false });
+
+for (const [path, result] of results) {
+  console.log(result.data, result.error);
+}
+```
+
+**Use Legacy API:**
+
+```javascript
+import { encodeLegacy } from 'imguri';
+
+encodeLegacy(['image.png'], { force: false }, (err, results) => {
+  console.log(results);
+});
+```
+
+## 🏗️ Architecture
+
+This library follows clean architecture principles:
+
+```
+src/
+├── core/              # Pure business logic
+│   └── encoder.js     # Base64 encoding
+├── adapters/          # External interfaces
+│   ├── file-reader.js # Local file system
+│   └── http-client.js # HTTP/HTTPS requests
+├── validators/        # Input validation
+│   └── input-validator.js
+└── index.js           # Public API
+```
+
+## 🧪 Testing
+
+```bash
+# Run tests
+npm test
+
+# Watch mode
+npm run test:watch
+
+# With coverage
+npm run test:coverage
+```
+
+## 🔨 Development
+
+```bash
+# Install dependencies
+npm install
+
+# Run linter
+npm run lint
+
+# Format code
+npm run format
+
+# Build
+npm run build
+```
+
+## 📝 License
+
+MIT © Vinayak Mishra
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📊 Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for version history.
+
+## 🙏 Acknowledgments
+
+- Built with modern Node.js features
+- Inspired by the need for a lightweight, dependency-free data URI encoder
+- Thanks to all contributors and users!
