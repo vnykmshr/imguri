@@ -30,10 +30,11 @@
     "mime-types": "^3.0.1"
   },
   "devDependencies": {
-    "@types/node": "^20.11.0",
+    "@types/node": "^24.10.1",
     "@vitest/coverage-v8": "^4.0.10",
     "esbuild": "^0.27.0",
-    "eslint": "^8.56.0",
+    "eslint": "^9.39.1",
+    "globals": "^16.5.0",
     "nock": "^14.0.10",
     "prettier": "^3.2.4",
     "vitest": "^4.0.10"
