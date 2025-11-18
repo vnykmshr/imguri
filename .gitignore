@@ -18,6 +18,8 @@ Icon
 .*
 !.gitignore
 !.git*
+!.eslintrc.json
+!.prettierrc.json
 *~
 
 
@@ -37,3 +39,31 @@ results
 
 npm-debug.log
 node_modules
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build outputs
+dist/
+*.tsbuildinfo
+
+# Testing
+coverage/
+.nyc_output/
+*.lcov
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Runtime
+.cache/
+.temp/
+tmp/
