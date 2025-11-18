@@ -5,36 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2025-01-XX
+## [Unreleased]
 
-### 🎉 Major Release - Complete Modernization
+### Major Release v1.0.0
 
-This release represents a complete rewrite of imguri with modern JavaScript, clean architecture, and improved developer experience.
+Modernizes imguri to ES modules, removes 3 deprecated dependencies, adds comprehensive test coverage (89% with 54 tests), and simplifies architecture to 2 layers. Increases default size limit from 4KB to 128KB for practical modern usage.
 
-### ✨ Added
+### Added
 
 - **Modern JavaScript**: Full ES modules (ESM) support with dual CJS/ESM exports
-- **TypeScript Support**: Complete TypeScript definitions for type safety
 - **Promise-based API**: Modern async/await API (breaking change from callbacks)
 - **Native Fetch**: Uses Node.js native fetch API (no deprecated `request` library)
 - **Clean Architecture**: Organized codebase with separation of concerns
-- **Comprehensive Tests**: Full test suite with Vitest and coverage reporting
+- **Comprehensive Tests**: 54 tests with 89% coverage using Vitest and nock for HTTP mocking
 - **CI/CD**: GitHub Actions workflow for automated testing
 - **Code Quality Tools**: ESLint and Prettier configuration
-- **Better Error Handling**: More descriptive error messages and proper error types
 - **Concurrency Control**: Configurable concurrent processing of multiple files
-- **Backward Compatibility**: Legacy callback API via `encodeLegacy()` function
+- **Backward Compatibility**: Legacy callback API via `encodeLegacy()` function (deprecated, will be removed in v2.0)
+- **Path Security**: Validation to prevent path traversal attacks
 
-### 🔄 Changed
+### Changed
 
 - **Breaking**: Minimum Node.js version is now 18.0.0 (for native fetch support)
 - **Breaking**: Default export changed from callback-based to promise-based API
 - **Breaking**: Results format changed from plain object to Map with structured results
+- **Breaking**: Default size limit increased from 4KB to 128KB
 - **Improved**: Better MIME type detection using `mime-types` library
 - **Improved**: More reliable file size validation before reading
 - **Improved**: HTTP requests now have proper timeout and abort support
 
-### 🗑️ Removed
+### Removed
 
 - **Breaking**: Removed deprecated `async` library dependency
 - **Breaking**: Removed deprecated `request` library (security vulnerability)
@@ -44,27 +44,37 @@ This release represents a complete rewrite of imguri with modern JavaScript, cle
   - `fs.exists()` → `fs.access()`
   - `util.isArray()` → `Array.isArray()`
 
-### 🔒 Security
+### Security
 
 - Eliminated all deprecated dependencies with known vulnerabilities
 - Updated to use only modern, actively maintained packages
-- Improved input validation and error handling
+- Path traversal protection added to prevent directory escape attacks
+- Absolute path access validated in production environments
 
-### 📦 Dependencies
+### Dependencies
 
 - Added: `mime-types@^2.1.35` (replacement for deprecated `mime`)
 - Removed: `async@^2.6.0` (no longer needed with async/await)
 - Removed: `request@^2.83.0` (replaced with native fetch)
 - Removed: `mime@^2.2.0` (replaced with `mime-types`)
 
-### 📝 Documentation
+### Testing
+
+- 54 comprehensive tests (18 unit, 36 integration) with 89.15% code coverage
+- HTTP client fully tested with nock for mocking (25 tests)
+- Remote URL functionality comprehensively tested (11 tests)
+- Path security validation tested
+- Tests use tmpdir for isolation, no file pollution
+
+### Documentation
 
 - Completely rewritten README with modern examples
-- Added comprehensive API documentation
-- Added TypeScript usage examples
+- Added comprehensive API documentation with JSDoc type annotations
 - Added migration guide from v0.x
-- Added architecture overview
-- Added detailed use cases and best practices
+- Added architecture overview with concrete responsibilities
+- Replaced generic use cases with 2 complete working examples
+- Added SECURITY.md for vulnerability reporting
+- Removed AI-generated fluff, made all content actionable
 
 ---
 

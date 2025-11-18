@@ -9,7 +9,7 @@
 ## ✨ Features
 
 - 🚀 **Modern** - Built with ES modules, async/await, and native fetch API
-- 📦 **Lightweight** - Minimal dependencies, lean codebase (~200 LOC)
+- 📦 **Lightweight** - Single dependency (mime-types), lean codebase (~250 LOC)
 - 🌐 **Universal** - Supports both local files and remote URLs
 - ⚡ **Fast** - Concurrent processing with configurable limits, esbuild-powered builds
 - 🛡️ **Secure** - Path traversal protection, no deprecated dependencies
@@ -61,20 +61,6 @@ const { encodeSingle, encode } = require('imguri');
   const dataUri = await encodeSingle('path/to/image.png');
   console.log(dataUri);
 })();
-```
-
-### TypeScript
-
-```typescript
-import { encodeSingle, encode, type EncodeOptions } from 'imguri';
-
-const options: EncodeOptions = {
-  force: false,
-  sizeLimit: 8192, // 8KB
-  timeout: 30000,
-};
-
-const dataUri: string = await encodeSingle('image.png', options);
 ```
 
 ## 📖 API Reference
@@ -189,48 +175,69 @@ encodeLegacy(['image1.png', 'image2.jpg'], { force: false }, (err, results) => {
 
 ## 💡 Use Cases
 
-### In HTML/CSS
+### Email Templates with Inline Images
 
 ```javascript
-const favicon = await encodeSingle('favicon.ico');
-// Use in HTML: <link rel="icon" href="data:image/x-icon;base64,..." />
+import { encodeSingle } from 'imguri';
+
+async function generateEmailHtml() {
+  const logo = await encodeSingle('assets/logo.png', { sizeLimit: 10240 });
+  const banner = await encodeSingle('assets/banner.jpg', { sizeLimit: 20480 });
+
+  return `
+    <!DOCTYPE html>
+    <html>
+      <body>
+        <img src="${logo}" alt="Company Logo" width="150">
+        <img src="${banner}" alt="Banner" width="600">
+        <p>Email content here...</p>
+      </body>
+    </html>
+  `;
+}
+
+const emailHtml = await generateEmailHtml();
+// Send via your email service (SendGrid, Mailgun, etc.)
 ```
 
-### Email Templates
-
-```javascript
-const logo = await encodeSingle('email-logo.png', { sizeLimit: 10240 });
-// Embed in email HTML
-const html = `<img src="${logo}" alt="Logo" />`;
-```
-
-### Build Tools / Bundlers
+### Build Tool Integration - Inline Assets
 
 ```javascript
 import { encode } from 'imguri';
+import { writeFile } from 'fs/promises';
 
-// Inline all images during build
-const images = ['logo.png', 'icon1.svg', 'icon2.svg'];
-const inlined = await encode(images, { force: true });
-```
+async function inlineAssets() {
+  const assets = [
+    'src/favicon.ico',
+    'src/icons/search.svg',
+    'src/icons/menu.svg',
+  ];
 
-### Offline-First Apps
+  const results = await encode(assets, { force: true, concurrency: 5 });
 
-```javascript
-// Cache images as data URIs
-const results = await encode([
-  'https://cdn.example.com/image1.jpg',
-  'https://cdn.example.com/image2.jpg',
-]);
+  const manifest = {};
+  for (const [path, result] of results) {
+    if (result.error) {
+      console.error(`Failed to encode ${path}:`, result.error.message);
+    } else {
+      const key = path.split('/').pop().replace(/\.\w+$/, '');
+      manifest[key] = result.data;
+    }
+  }
 
-localStorage.setItem('cached-images', JSON.stringify(Array.from(results)));
+  await writeFile('dist/inlined-assets.json', JSON.stringify(manifest, null, 2));
+  console.log('Inlined', Object.keys(manifest).length, 'assets');
+}
+
+await inlineAssets();
+// Output: dist/inlined-assets.json with { "favicon": "data:image/...", ... }
 ```
 
 ## ⚠️ Important Notes
 
 1. **Size Limits**: Default 128KB limit balances practicality with performance. Large data URIs increase page load time.
 2. **Browser Support**: Data URIs are well-supported but have size limits (~2MB in most browsers)
-3. **Security**: Path traversal attacks (`../`) are blocked. Absolute paths are allowed (explicit user intent). Relative paths are validated to ensure they don't escape cwd.
+3. **Security**: Path traversal attacks (`../`) are blocked. Absolute paths are allowed (explicit user intent). Relative paths are validated to ensure they don't escape cwd. **Warning**: Absolute paths can access any readable file on the system. Validate user input in production environments.
 4. **Best Practices**:
    - Use for small images (icons, logos, favicons)
    - Avoid for large photos or complex graphics
@@ -275,18 +282,20 @@ encodeLegacy(['image.png'], { force: false }, (err, results) => {
 
 ## 🏗️ Architecture
 
-This library follows a clean, two-layer architecture:
+This library follows a two-layer architecture with clear separation of concerns:
 
-```
-src/
-├── core/              # Pure business logic
-│   └── encoder.js     # Base64 encoding
-├── adapters/          # External interfaces
-│   ├── file-reader.js # Local file system
-│   └── http-client.js # HTTP/HTTPS requests
-├── config.js          # Configuration constants
-└── imguri.js          # Public API with validation
-```
+**Core Layer** (Pure business logic)
+- `encoder.js` - Base64 encoding and data URI formatting
+
+**Adapter Layer** (External I/O)
+- `file-reader.js` - File system operations (read, stat, exists, MIME detection)
+- `http-client.js` - HTTP operations (fetch metadata, fetch buffer, content-type validation)
+
+**Main Module**
+- `imguri.js` - Coordinates adapters, applies path security validation, handles concurrency
+- `config.js` - Configuration constants (size limits, timeouts, concurrency)
+
+Data flows from adapters through validation to the encoder, with the main module orchestrating all operations.
 
 ## 🧪 Testing
 
@@ -319,7 +328,7 @@ npm run build
 
 ## 📝 License
 
-MIT © Vinayak Mishra
+MIT License
 
 ## 🤝 Contributing
 
@@ -328,9 +337,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## 📊 Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for version history.
-
-## 🙏 Acknowledgments
-
-- Built with modern Node.js features
-- Inspired by the need for a lightweight, dependency-free data URI encoder
-- Thanks to all contributors and users!
