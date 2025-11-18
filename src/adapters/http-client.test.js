@@ -2,7 +2,7 @@
  * Tests for HTTP client adapter
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import nock from 'nock';
 import { fetchMetadata, fetchBuffer, isImageContentType } from './http-client.js';
 

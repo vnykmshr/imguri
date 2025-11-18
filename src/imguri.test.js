@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
 import { encodeSingle, encode } from './imguri.js';
-import { writeFile, mkdir, rm, mkdtemp } from 'fs/promises';
+import { writeFile, rm, mkdtemp } from 'fs/promises';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import nock from 'nock';
