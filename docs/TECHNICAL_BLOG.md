@@ -75,14 +75,14 @@ sequenceDiagram
     participant Adapter
     participant Encoder
 
-    Client->>imguri: encode(['file.png', 'url.jpg'])
-    imguri->>Validator: validatePath('file.png')
+    Client->>imguri: encode(paths)
+    imguri->>Validator: validatePath(file)
     Validator-->>imguri: normalized path
     imguri->>Adapter: readFile/fetchBuffer
-    Adapter-->>imguri: {buffer, mimeType}
-    imguri->>Encoder: toDataUri(buffer, mimeType)
-    Encoder-->>imguri: 'data:image/png;base64,...'
-    imguri-->>Client: Map{path: {data, error}}
+    Adapter-->>imguri: buffer and mimeType
+    imguri->>Encoder: toDataUri(buffer)
+    Encoder-->>imguri: data URI string
+    imguri-->>Client: results Map
 ```
 
 ## Implementation Deep Dive
