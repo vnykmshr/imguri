@@ -160,8 +160,12 @@ npm run lint     # Check code style
 npm run build    # Build CJS/ESM bundles
 ```
 
+## Documentation
+
+- [Technical Blog](docs/TECHNICAL_BLOG.md) - Architecture deep dive
+- [Changelog](CHANGELOG.md) - Version history
+- [Security Policy](.github/SECURITY.md) - Vulnerability reporting
+
 ## License
 
 MIT License
-
-See [SECURITY.md](SECURITY.md) for vulnerability reporting.
