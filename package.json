@@ -1,15 +1,41 @@
 {
   "name": "imguri",
-  "version": "0.0.6",
-  "description": "Easily convert local/network image file to data uri scheme ",
-  "main": "index.js",
+  "version": "1.0.0",
+  "description": "Modern, lightweight library to convert local/network image files to data URI scheme",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
-    "test": "node test"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "build": "node scripts/build.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run lint && npm run test && npm run build"
   },
   "dependencies": {
-    "async": "^2.6.0",
-    "mime": "^2.2.0",
-    "request": "^2.83.0"
+    "mime-types": "^2.1.35"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.4",
+    "vitest": "^1.2.0"
   },
   "repository": {
     "type": "git",
@@ -18,11 +44,21 @@
   "keywords": [
     "data-uri",
     "image-data",
-    "inline-image"
+    "inline-image",
+    "base64",
+    "image-encoding",
+    "data-url",
+    "esm",
+    "typescript"
   ],
   "author": "Vinayak Mishra",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/vnykmshr/imguri/issues"
-  }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
 }
