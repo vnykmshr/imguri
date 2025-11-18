@@ -10,7 +10,3 @@ export function toDataUri(buffer, mimeType) {
   const base64 = buffer.toString('base64');
   return `data:${mimeType};base64,${base64}`;
 }
-
-export function exceedsSizeLimit(buffer, sizeLimit) {
-  return buffer.length > sizeLimit;
-}

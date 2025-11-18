@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { toDataUri, exceedsSizeLimit } from './encoder.js';
+import { toDataUri } from './encoder.js';
 
 describe('toDataUri', () => {
   it('should convert buffer to data URI', () => {
@@ -35,22 +35,5 @@ describe('toDataUri', () => {
     expect(() => toDataUri(buffer, '')).toThrow(TypeError);
     expect(() => toDataUri(buffer, null)).toThrow(TypeError);
     expect(() => toDataUri(buffer, undefined)).toThrow(TypeError);
-  });
-});
-
-describe('exceedsSizeLimit', () => {
-  it('should return true when buffer exceeds limit', () => {
-    const buffer = Buffer.alloc(100);
-    expect(exceedsSizeLimit(buffer, 50)).toBe(true);
-  });
-
-  it('should return false when buffer is within limit', () => {
-    const buffer = Buffer.alloc(50);
-    expect(exceedsSizeLimit(buffer, 100)).toBe(false);
-  });
-
-  it('should return false when buffer equals limit', () => {
-    const buffer = Buffer.alloc(100);
-    expect(exceedsSizeLimit(buffer, 100)).toBe(false);
   });
 });

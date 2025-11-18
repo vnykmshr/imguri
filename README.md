@@ -9,12 +9,11 @@
 ## ✨ Features
 
 - 🚀 **Modern** - Built with ES modules, async/await, and native fetch API
-- 🔒 **Type-safe** - Full TypeScript definitions included
-- 📦 **Lightweight** - Zero dependencies (only `mime-types` for MIME detection)
+- 📦 **Lightweight** - Minimal dependencies, lean codebase (~200 LOC)
 - 🌐 **Universal** - Supports both local files and remote URLs
-- ⚡ **Fast** - Concurrent processing with configurable limits
-- 🛡️ **Secure** - No deprecated dependencies, built for Node.js 18+
-- 🔄 **Backward Compatible** - Legacy callback API still supported
+- ⚡ **Fast** - Concurrent processing with configurable limits, esbuild-powered builds
+- 🛡️ **Secure** - Path traversal protection, no deprecated dependencies
+- 🔄 **Backward Compatible** - Legacy callback API supported (deprecated, will be removed in v2.0)
 
 ## 📋 Requirements
 
@@ -86,10 +85,10 @@ Encode a single file or URL to a data URI.
 
 **Parameters:**
 
-- `path` (string) - Local file path or HTTP/HTTPS URL
+- `path` (string) - Local file path or HTTP/HTTPS URL (paths validated for security)
 - `options` (object, optional):
   - `force` (boolean) - Override size limit (default: `false`)
-  - `sizeLimit` (number) - Max file size in bytes (default: `4096`)
+  - `sizeLimit` (number) - Max file size in bytes (default: `131072` / 128KB)
   - `timeout` (number) - HTTP timeout in ms (default: `20000`)
 
 **Returns:** `Promise<string>` - Data URI string
@@ -121,7 +120,7 @@ Encode multiple files or URLs with concurrent processing.
 - `paths` (string | string[]) - Single path or array of paths
 - `options` (object, optional):
   - `force` (boolean) - Override size limit (default: `false`)
-  - `sizeLimit` (number) - Max file size in bytes (default: `4096`)
+  - `sizeLimit` (number) - Max file size in bytes (default: `131072` / 128KB)
   - `timeout` (number) - HTTP timeout in ms (default: `20000`)
   - `concurrency` (number) - Max concurrent ops (default: `10`)
 
@@ -181,12 +180,12 @@ encodeLegacy(['image1.png', 'image2.jpg'], { force: false }, (err, results) => {
 
 ## 🔧 Options
 
-| Option        | Type    | Default | Description                                  |
-| ------------- | ------- | ------- | -------------------------------------------- |
-| `force`       | boolean | `false` | Override size limit restrictions             |
-| `sizeLimit`   | number  | `4096`  | Maximum file size in bytes (4KB default)     |
-| `timeout`     | number  | `20000` | HTTP request timeout in milliseconds         |
-| `concurrency` | number  | `10`    | Maximum number of concurrent encode requests |
+| Option        | Type    | Default  | Description                                  |
+| ------------- | ------- | -------- | -------------------------------------------- |
+| `force`       | boolean | `false`  | Override size limit restrictions             |
+| `sizeLimit`   | number  | `131072` | Maximum file size in bytes (128KB default)   |
+| `timeout`     | number  | `20000`  | HTTP request timeout in milliseconds         |
+| `concurrency` | number  | `10`     | Maximum number of concurrent encode requests |
 
 ## 💡 Use Cases
 
@@ -229,9 +228,10 @@ localStorage.setItem('cached-images', JSON.stringify(Array.from(results)));
 
 ## ⚠️ Important Notes
 
-1. **Size Limits**: Default 4KB limit prevents performance issues. Large data URIs increase page load time.
+1. **Size Limits**: Default 128KB limit balances practicality with performance. Large data URIs increase page load time.
 2. **Browser Support**: Data URIs are well-supported but have size limits (~2MB in most browsers)
-3. **Best Practices**:
+3. **Security**: Paths are validated to prevent traversal attacks - relative paths within cwd are allowed, `..` and absolute paths outside cwd are blocked
+4. **Best Practices**:
    - Use for small images (icons, logos, favicons)
    - Avoid for large photos or complex graphics
    - Consider lazy loading for multiple images
@@ -275,7 +275,7 @@ encodeLegacy(['image.png'], { force: false }, (err, results) => {
 
 ## 🏗️ Architecture
 
-This library follows clean architecture principles:
+This library follows a clean, two-layer architecture:
 
 ```
 src/
@@ -284,9 +284,8 @@ src/
 ├── adapters/          # External interfaces
 │   ├── file-reader.js # Local file system
 │   └── http-client.js # HTTP/HTTPS requests
-├── validators/        # Input validation
-│   └── input-validator.js
-└── index.js           # Public API
+├── config.js          # Configuration constants
+└── imguri.js          # Public API with validation
 ```
 
 ## 🧪 Testing
