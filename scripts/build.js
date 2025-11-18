@@ -40,15 +40,30 @@ function esmToCjs(code) {
     return namedExports.map((exp) => `exports.${exp} = ${exp}`).join(';\n');
   });
 
+  // Convert export async function
+  transformed = transformed.replace(
+    /export\s+async\s+function\s+(\w+)/g,
+    'async function $1'
+  );
+
   // Convert export const/function/class
-  transformed = transformed.replace(/export\s+(const|function|class)\s+(\w+)/g, '$1 $2');
+  transformed = transformed.replace(
+    /export\s+(const|function|class)\s+(\w+)/g,
+    '$1 $2'
+  );
 
   // Add module.exports at the end for exported items
-  const exportMatches = code.match(/export\s+(const|function|class)\s+(\w+)/g);
-  if (exportMatches) {
+  const exportMatches = [
+    ...(code.match(/export\s+async\s+function\s+(\w+)/g) || []),
+    ...(code.match(/export\s+(const|function|class)\s+(\w+)/g) || []),
+  ];
+
+  if (exportMatches.length > 0) {
     const exportedNames = exportMatches
       .map((match) => {
-        const nameMatch = match.match(/export\s+(?:const|function|class)\s+(\w+)/);
+        const nameMatch = match.match(
+          /export\s+(?:async\s+)?(?:const|function|class)\s+(\w+)/
+        );
         return nameMatch ? nameMatch[1] : null;
       })
       .filter(Boolean);
