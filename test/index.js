@@ -4,7 +4,7 @@ var imguri = require('../');
 if (require.main === module) {
   (function () {
     var options = {
-      force: false
+      force: false,
     };
     var paths = ['test/test.png', 'test/nofile'];
     paths.push('http://www.vnykmshr.com/images/favicon.ico');
